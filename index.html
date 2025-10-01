@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Buzzer Game</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      margin-top: 50px;
+      background: #111;
+      color: white;
+    }
+
+    input {
+      font-size: 18px;
+      padding: 10px;
+      margin: 20px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    /* Tombol buzzer */
+    .buzzer-btn {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      border: none;
+      background: radial-gradient(circle at 30% 30%, #ff4444, #cc0000);
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.8), inset 0 0 20px rgba(255, 200, 200, 0.5);
+      font-size: 22px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.2s;
+    }
+
+    .buzzer-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 40px rgba(255, 0, 0, 1), inset 0 0 20px rgba(255, 255, 255, 0.6);
+    }
+
+    .buzzer-btn:active {
+      transform: scale(0.95);
+      background: radial-gradient(circle at 30% 30%, #cc0000, #990000);
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.6), inset 0 0 15px rgba(255, 100, 100, 0.5);
+    }
+
+    #status {
+      margin-top: 30px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #FFD700;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔔 Game Buzzer</h1>
+  <input type="text" id="playerName" placeholder="Masukkan Nama Anda">
+  <br>
+  <button class="buzzer-btn" onclick="sendBuzz()">🔔 BUZZER</button>
+  <div id="status">Belum ada yang menekan...</div>
+
+  <!-- Suara buzzer -->
+  <audio id="buzzerSound">
+    <source src="buzzer.mp3" type="audio/mpeg">
+    <source src="buzzer.wav" type="audio/wav">
+  </audio>
+
+  <script>
+    function sendBuzz() {
+      let name = document.getElementById("playerName").value;
+      if (!name) {
+        alert("Isi nama dulu!");
+        return;
+      }
+
+      fetch("buzzer.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "name=" + encodeURIComponent(name)
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("status").innerText = data.message;
+
+        if (data.winner === true) {
+          document.getElementById("buzzerSound").play();
+        }
+      });
+    }
+  </script>
+</body>
+</html>
